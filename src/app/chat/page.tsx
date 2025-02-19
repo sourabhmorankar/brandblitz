@@ -56,8 +56,8 @@ const ChatPage = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-900">
-      <header className="p-4 bg-gray-800">
-        <h1 className="text-xl font-bold">BrandBlitz Chat</h1>
+      <header className="p-4 bg-gray-800 border-b border-gray-700">
+        <h1 className="text-xl font-bold text-indigo-400">BrandBlitz Chat</h1>
       </header>
       <div className="flex-1 overflow-y-auto p-4">
         {messages.map((msg) => (

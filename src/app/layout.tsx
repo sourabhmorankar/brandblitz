@@ -1,11 +1,10 @@
 import './globals.css';
 import { ReactNode } from 'react';
 import AuthWrapper from '@/components/AuthWrapper';
-import Layout from '@/components/Layout';
 
 export const metadata = {
   title: 'BrandBlitz',
-  description: 'Chat-based design collaboration platform',
+  description: 'Your chat-based design collaboration platform',
 };
 
 interface RootLayoutProps {
@@ -15,9 +14,12 @@ interface RootLayoutProps {
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en">
-      <body>
+      <body className="flex flex-col min-h-screen">
         <AuthWrapper>
-          <Layout>{children}</Layout>
+          <main className="flex-1">{children}</main>
+          <footer className="p-4 bg-gray-900 text-center text-sm text-gray-400">
+            © {new Date().getFullYear()} BrandBlitz. All rights reserved.
+          </footer>
         </AuthWrapper>
       </body>
     </html>
