@@ -1,6 +1,6 @@
 'use client';
 
-import { ChatMessage } from '@/app/chat/page';
+import { ChatMessage } from '@/types/chat';
 
 interface MessageProps {
   message: ChatMessage;

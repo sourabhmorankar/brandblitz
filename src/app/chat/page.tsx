@@ -6,13 +6,7 @@ import { rtdb } from '@/firebase';
 import { ref, onValue, push } from 'firebase/database';
 import Message from '@/components/Message';
 import InputBox from '@/components/InputBox';
-
-interface ChatMessage {
-  id: string;
-  text: string;
-  senderId: string;
-  timestamp: number;
-}
+import { ChatMessage } from '@/types/chat';
 
 const ChatPage = () => {
   const { user } = useAuth();
@@ -25,9 +19,11 @@ const ChatPage = () => {
     const unsubscribe = onValue(messagesRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const messageList = Object.entries(data).map(([id, msg]: [string, any]) => ({
+        const messageList = Object.entries(data).map(([id, msg]) => ({
           id,
-          ...msg,
+          text: (msg as ChatMessage).text,
+          senderId: (msg as ChatMessage).senderId,
+          timestamp: (msg as ChatMessage).timestamp,
         }));
         setMessages(messageList);
       } else {
