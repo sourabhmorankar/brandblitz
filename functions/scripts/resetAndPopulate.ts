@@ -27,24 +27,28 @@ const dummyUsers = [
     uid: 'user1',
     email: 'client1@example.com',
     displayName: 'Client One',
+    role: 'user',
     subscription: { plan: 'Weekly', requests: 1, active: true, updatedAt: admin.firestore.FieldValue.serverTimestamp() },
   },
   {
     uid: 'user2',
     email: 'client2@example.com',
     displayName: 'Client Two',
+    role: 'user',
     subscription: { plan: 'Weekly+', requests: 2, active: true, updatedAt: admin.firestore.FieldValue.serverTimestamp() },
   },
   {
     uid: 'user3',
     email: 'client3@example.com',
     displayName: 'Client Three',
+    role: 'user',
     subscription: { plan: 'Weekly++', requests: 3, active: true, updatedAt: admin.firestore.FieldValue.serverTimestamp() },
   },
   {
     uid: 'admin1',
     email: 'admin@example.com',
     displayName: 'Admin User',
+    role: 'admin',
     subscription: null,
   },
 ];
@@ -96,21 +100,19 @@ const dummyRequests = [
 
 async function resetAndPopulate() {
   try {
-    // Clear existing data
     await deleteCollection('users');
     await deleteCollection('requests');
 
-    // Populate users
     for (const user of dummyUsers) {
       await db.collection('users').doc(user.uid).set({
         email: user.email,
         displayName: user.displayName,
+        role: user.role,
         subscription: user.subscription,
       }, { merge: true });
-      console.log(`Added user: ${user.displayName}`);
+      console.log(`Added user: ${user.displayName} (${user.role})`);
     }
 
-    // Populate requests
     for (const request of dummyRequests) {
       const docRef = await db.collection('requests').add(request);
       console.log(`Added request: ${request.brief} for ${request.clientId} with ID: ${docRef.id}`);
