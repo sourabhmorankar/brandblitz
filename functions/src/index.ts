@@ -13,7 +13,7 @@ export const paypalWebhook = functions.https.onRequest(async (req, res) => {
   const headers = req.headers;
 
   try {
-    const verifyUrl = 'https://api-m.sandbox.paypal.com/v1/notifications/verify-webhook-signature';
+    const verifyUrl = 'https://us-central1-brandblitz-one.cloudfunctions.net/paypalWebhook';
     const verifyBody = JSON.stringify({
       auth_algo: headers['paypal-auth-algo'],
       cert_url: headers['paypal-cert-url'],
@@ -53,9 +53,9 @@ export const paypalWebhook = functions.https.onRequest(async (req, res) => {
       const planId = webhookEvent.resource.plan_id;
 
       const planMap: Record<string, { name: string; requests: number }> = {
-        'P-123456789': { name: 'Weekly', requests: 1 },   // Replace with actual Plan ID
-        'P-987654321': { name: 'Weekly+', requests: 2 },  // Replace with actual Plan ID
-        'P-456789123': { name: 'Weekly++', requests: 3 }, // Replace with actual Plan ID
+        'P-weekly': { name: 'Weekly', requests: 1 },
+        'P-weekly+': { name: 'Weekly+', requests: 2 },
+        'P-weekly++': { name: 'Weekly++', requests: 3 },
       };
 
       const plan = planMap[planId] || { name: 'Unknown', requests: 0 };

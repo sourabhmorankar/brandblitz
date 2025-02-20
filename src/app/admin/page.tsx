@@ -10,17 +10,17 @@ import Link from 'next/link';
 const AdminPage = () => {
   const { user } = useAuth();
   const [requests, setRequests] = useState<DesignRequest[]>([]);
+  const [users, setUsers] = useState<Record<string, { displayName: string; subscription?: { plan: string; requests: number; active: boolean } }>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
 
-    // Check if user is admin (for simplicity, hardcoded UID; use Firestore 'admins' collection in production)
-    const adminUid = 'your-admin-uid'; // Replace with actual admin UID
+    const adminUid = 'admin1';
     if (user.uid !== adminUid) return;
 
     const requestsRef = collection(db, 'requests');
-    const unsubscribe = onSnapshot(requestsRef, (snapshot) => {
+    const unsubscribeRequests = onSnapshot(requestsRef, (snapshot) => {
       const requestList = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -29,7 +29,22 @@ const AdminPage = () => {
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    const usersRef = collection(db, 'users');
+    const unsubscribeUsers = onSnapshot(usersRef, (snapshot) => {
+      const userMap: Record<string, { displayName: string; subscription?: { plan: string; requests: number; active: boolean } }> = {};
+      snapshot.forEach((doc) => {
+        userMap[doc.id] = {
+          displayName: doc.data().displayName || 'Unknown',
+          subscription: doc.data().subscription,
+        };
+      });
+      setUsers(userMap);
+    });
+
+    return () => {
+      unsubscribeRequests();
+      unsubscribeUsers();
+    };
   }, [user]);
 
   const updateStatus = async (requestId: string, newStatus: DesignRequest['status']) => {
@@ -48,7 +63,7 @@ const AdminPage = () => {
     );
   }
 
-  if (user.uid !== 'your-admin-uid') { // Replace with actual admin UID
+  if (user.uid !== 'admin1') {
     return (
       <div className="flex items-center justify-center min-h-screen p-6">
         <div className="card text-center">
@@ -80,6 +95,7 @@ const AdminPage = () => {
                   <tr className="border-b border-gray-700">
                     <th className="p-3">Request ID</th>
                     <th className="p-3">Client</th>
+                    <th className="p-3">Subscription</th>
                     <th className="p-3">Brief</th>
                     <th className="p-3">Status</th>
                     <th className="p-3">Actions</th>
@@ -89,7 +105,11 @@ const AdminPage = () => {
                   {requests.map((request) => (
                     <tr key={request.id} className="border-b border-gray-700 hover:bg-gray-700">
                       <td className="p-3">{request.id}</td>
-                      <td className="p-3">{request.clientId}</td>
+                      <td className="p-3">{users[request.clientId]?.displayName || request.clientId}</td>
+                      <td className="p-3">
+                        {users[request.clientId]?.subscription?.plan || 'None'} (
+                        {users[request.clientId]?.subscription?.requests || 0})
+                      </td>
                       <td className="p-3">{request.brief}</td>
                       <td className="p-3 capitalize">{request.status.replace('_', ' ')}</td>
                       <td className="p-3 space-x-2">
