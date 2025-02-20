@@ -18,16 +18,17 @@ const InputBox = ({ onSend }: InputBoxProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-gray-800 border-t border-gray-700">
+    <form onSubmit={handleSubmit} className="p-4 bg-gray-900 border-t border-gray-800 sticky bottom-0">
       <div className="flex space-x-2">
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="flex-1 p-2 bg-gray-700 rounded text-white"
+          className="input flex-1"
           placeholder="Type your message..."
+          aria-label="Chat message input"
         />
-        <button type="submit" className="p-2 bg-blue-600 rounded hover:bg-blue-700">
+        <button type="submit" className="btn-primary">
           Send
         </button>
       </div>

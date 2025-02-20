@@ -4,13 +4,12 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap');
 
-/* Base styles */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #0d1117; /* Grok-like deep dark background */
-  color: #c9d1d9; /* Soft light gray for text */
+  background-color: #0d1117;
+  color: #f0f0f0;
   font-family: 'Lexend', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -20,26 +19,32 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom components */
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 bg-indigo-800 text-white rounded-lg hover:bg-indigo-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50;
+    @apply px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-200;
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50;
+    @apply px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50;
   }
 
   .card {
-    @apply p-6 bg-gray-900 rounded-xl shadow-md border border-gray-800 transition-all duration-200 hover:shadow-lg;
+    @apply p-10 bg-gray-900 rounded-2xl shadow-lg border border-gray-800 hover:shadow-2xl transition-all duration-300;
   }
 
   .input {
-    @apply w-full p-2 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50;
+    @apply w-full p-4 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900 placeholder-gray-400;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl font-bold text-white mb-8;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl font-semibold text-gray-100 mb-6;
   }
 }
 
-/* Animations */
 .animate-fade-in {
   animation: fadeIn 0.8s ease-in-out;
 }
@@ -58,7 +63,6 @@ html {
   100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }

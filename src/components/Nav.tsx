@@ -14,32 +14,44 @@ const Nav = () => {
   };
 
   return (
-    <nav className="max-w-7xl mx-auto flex items-center justify-between">
-      <Link href="/" className="text-xl font-semibold text-white">
+    <nav aria-label="Main navigation" className="max-w-7xl mx-auto flex items-center justify-between">
+      <Link href="/" className="text-2xl font-bold text-white hover:text-indigo-300 transition-colors">
         BrandBlitz
       </Link>
-      <div className="flex items-center space-x-6">
-        <Link href="/" className="text-gray-400 hover:text-white transition-colors">
-          Home
-        </Link>
-        <Link href="/chat/request123" className="text-gray-400 hover:text-white transition-colors">
-          Chat
-        </Link>
+      <ul className="flex items-center space-x-8" role="menubar">
+        <li role="none">
+          <Link href="/" className="text-gray-300 hover:text-white focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded-md px-2 py-1 transition-colors" role="menuitem">
+            Home
+          </Link>
+        </li>
+        <li role="none">
+          <Link href="/chat/request123" className="text-gray-300 hover:text-white focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded-md px-2 py-1 transition-colors" role="menuitem">
+            Chat
+          </Link>
+        </li>
         {user && role === 'admin' && (
-          <Link href="/admin" className="text-gray-400 hover:text-white transition-colors">
-            Admin
-          </Link>
+          <li role="none">
+            <Link href="/admin" className="text-gray-300 hover:text-white focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded-md px-2 py-1 transition-colors" role="menuitem">
+              Admin
+            </Link>
+          </li>
         )}
-        {user ? (
-          <button onClick={handleLogout} className="text-gray-400 hover:text-white transition-colors">
-            Logout
-          </button>
-        ) : (
-          <Link href="/auth" className="text-gray-400 hover:text-white transition-colors">
-            Login
-          </Link>
-        )}
-      </div>
+        <li role="none">
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="text-gray-300 hover:text-white focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded-md px-2 py-1 transition-colors"
+              role="menuitem"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/auth" className="text-gray-300 hover:text-white focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded-md px-2 py-1 transition-colors" role="menuitem">
+              Login
+            </Link>
+          )}
+        </li>
+      </ul>
     </nav>
   );
 };

@@ -54,7 +54,7 @@ const AdminPage = () => {
     await updateDoc(requestRef, { status: newStatus, updatedAt: Date.now() });
   };
 
-  if (!user || role !== 'admin') return null; // Handled by useEffect redirect
+  if (!user || role !== 'admin') return null;
 
   if (loading) {
     return <div className="text-center text-gray-400 mt-20">Loading...</div>;

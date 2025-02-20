@@ -7,6 +7,7 @@ import { collection, addDoc, query, where, onSnapshot, doc } from 'firebase/fire
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { FaPaperPlane } from 'react-icons/fa';
 
 const HomePage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -15,6 +16,7 @@ const HomePage = () => {
   const [subscription, setSubscription] = useState<{ plan: string; requests: number; active: boolean } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -49,15 +51,18 @@ const HomePage = () => {
     e.preventDefault();
     if (!user || !brief.trim()) return;
 
+    setIsSubmitting(true);
     if (!subscription || !subscription.active) {
       setError('You need an active subscription to submit a request.');
       toast.error('You need an active subscription.');
+      setIsSubmitting(false);
       return;
     }
 
     if (activeRequests >= subscription.requests) {
       setError(`You’ve reached your limit of ${subscription.requests} active requests.`);
       toast.error(`Limit reached: ${subscription.requests} active requests.`);
+      setIsSubmitting(false);
       return;
     }
 
@@ -77,6 +82,8 @@ const HomePage = () => {
       console.error('Error submitting request:', err);
       setError('Failed to submit request.');
       toast.error('Submission failed.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -91,23 +98,51 @@ const HomePage = () => {
           <h1 className="text-3xl font-semibold text-white mb-6 text-center">
             Welcome, {user.email}
           </h1>
-          <div className="card">
+          <section className="card">
             <h2 className="text-xl font-medium text-gray-200 mb-4">New Design Request</h2>
             {subscription && subscription.active ? (
               <>
-                <p className="text-gray-400 mb-4">
+                <p className="text-gray-400 mb-6">
                   Active Requests: {activeRequests}/{subscription.requests}
                 </p>
-                <form onSubmit={handleCreateRequest} className="space-y-4">
-                  <textarea
-                    value={brief}
-                    onChange={(e) => setBrief(e.target.value)}
-                    className="input h-32"
-                    placeholder="Describe your design needs..."
-                    required
-                  />
-                  {error && <p className="text-red-500 text-sm">{error}</p>}
-                  <button type="submit" className="btn-primary w-full">Submit</button>
+                <form onSubmit={handleCreateRequest} className="space-y-6">
+                  <div>
+                    <label htmlFor="brief" className="block text-sm font-medium text-gray-300 mb-2">
+                      Design Brief
+                    </label>
+                    <textarea
+                      id="brief"
+                      value={brief}
+                      onChange={(e) => setBrief(e.target.value)}
+                      className="input h-36 resize-y"
+                      placeholder="Describe your design needs (e.g., logo, website banner)..."
+                      required
+                      aria-describedby={error ? "brief-error" : undefined}
+                    />
+                    {error && (
+                      <p id="brief-error" className="text-red-400 text-sm mt-2">{error}</p>
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn-primary w-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isSubmitting || !brief.trim()}
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center">
+                        <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z" />
+                        </svg>
+                        Submitting...
+                      </span>
+                    ) : (
+                      <>
+                        <FaPaperPlane className="mr-2" />
+                        Submit Request
+                      </>
+                    )}
+                  </button>
                 </form>
               </>
             ) : (
@@ -116,7 +151,7 @@ const HomePage = () => {
                 <Link href="/subscribe" className="text-indigo-400 hover:underline">Get a Plan</Link>
               </p>
             )}
-          </div>
+          </section>
         </div>
       ) : (
         <div className="text-center max-w-md">

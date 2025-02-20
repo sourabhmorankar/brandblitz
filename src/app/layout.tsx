@@ -23,7 +23,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
             <Nav />
           </header>
           <main className="flex-1 bg-gray-950">{children}</main>
-          <footer className="bg-gray-900 border-t border-gray-800 p-4 text-gray-500 text-sm text-center">
+          <footer className="bg-gray-900 border-t border-gray-800 p-6 text-gray-500 text-sm text-center">
             © {new Date().getFullYear()} BrandBlitz. All rights reserved.
           </footer>
           <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} theme="dark" />
