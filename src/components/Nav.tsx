@@ -15,27 +15,27 @@ const Nav = () => {
 
   return (
     <nav className="max-w-7xl mx-auto flex items-center justify-between">
-      <Link href="/" className="text-2xl font-bold text-indigo-400">
+      <Link href="/" className="text-xl font-semibold text-white">
         BrandBlitz
       </Link>
-      <div className="space-x-4">
-        <Link href="/" className="text-gray-300 hover:text-indigo-400 transition-colors">
+      <div className="flex items-center space-x-6">
+        <Link href="/" className="text-gray-400 hover:text-white transition-colors">
           Home
         </Link>
-        <Link href="/chat/request123" className="text-gray-300 hover:text-indigo-400 transition-colors">
+        <Link href="/chat/request123" className="text-gray-400 hover:text-white transition-colors">
           Chat
         </Link>
         {user && role === 'admin' && (
-          <Link href="/admin" className="text-gray-300 hover:text-indigo-400 transition-colors">
+          <Link href="/admin" className="text-gray-400 hover:text-white transition-colors">
             Admin
           </Link>
         )}
         {user ? (
-          <button onClick={handleLogout} className="text-gray-300 hover:text-indigo-400 transition-colors">
+          <button onClick={handleLogout} className="text-gray-400 hover:text-white transition-colors">
             Logout
           </button>
         ) : (
-          <Link href="/auth" className="text-gray-300 hover:text-indigo-400 transition-colors">
+          <Link href="/auth" className="text-gray-400 hover:text-white transition-colors">
             Login
           </Link>
         )}

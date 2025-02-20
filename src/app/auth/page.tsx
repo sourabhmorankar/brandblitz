@@ -60,7 +60,7 @@ const AuthPage = () => {
     try {
       await googleLogin();
       setError('');
-      toast.success('Logged in with Google successfully!');
+      toast.success('Logged in with Google!');
     } catch (err: unknown) {
       const firebaseErr = err as FirebaseError;
       setError(firebaseErr.message || 'Google login failed');
@@ -81,65 +81,57 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-6">
-      <div className="card max-w-md w-full animate-fade-in">
+    <div className="min-h-screen p-8 flex items-center justify-center">
+      <div className="card max-w-md w-full">
         {user ? (
           <>
-            <h2 className="text-3xl font-bold text-indigo-400 mb-6 text-center">Logout</h2>
-            <p className="text-gray-300 mb-6 text-center">Logged in as {user.email} ({role})</p>
+            <p className="text-gray-200 mb-6 text-center">Logged in as {user.email} ({role})</p>
             <button onClick={handleLogout} className="btn-primary w-full">
               Logout
             </button>
           </>
         ) : (
           <>
-            <h2 className="text-3xl font-bold text-indigo-400 mb-6 text-center">
-              {isSignUp ? 'Sign Up for BrandBlitz' : 'Login to BrandBlitz'}
+            <h2 className="text-2xl font-medium text-white mb-6 text-center">
+              {isSignUp ? 'Sign Up' : 'Login'}
             </h2>
-            <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-6">
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input"
-                  required
-                />
-              </div>
+            <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-4">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input"
+                placeholder="Email"
+                required
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input"
+                placeholder="Password"
+                required
+              />
               {isSignUp && (
-                <div>
-                  <label className="block text-sm text-gray-300 mb-1">Display Name</label>
-                  <input
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    className="input"
-                    required
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="input"
+                  placeholder="Display Name"
+                  required
+                />
               )}
               {error && <p className="text-red-500 text-sm text-center">{error}</p>}
               <button type="submit" className="btn-primary w-full">
                 {isSignUp ? 'Sign Up' : 'Login'}
               </button>
             </form>
-            <div className="mt-6 text-center">
-              <p className="text-gray-400 mb-2">Or {isSignUp ? 'sign up' : 'login'} with:</p>
-              <button onClick={handleGoogleLogin} className="btn-secondary w-full">Google</button>
-            </div>
-            <p className="text-gray-400 mt-4 text-center">
-              {isSignUp ? 'Already have an account?' : 'Need an account?'}{' '}
+            <button onClick={handleGoogleLogin} className="btn-secondary w-full mt-4">
+              Google
+            </button>
+            <p className="text-gray-400 mt-4 text-center text-sm">
+              {isSignUp ? 'Have an account?' : 'Need an account?'}{' '}
               <button onClick={() => setIsSignUp(!isSignUp)} className="text-indigo-400 hover:underline">
                 {isSignUp ? 'Login' : 'Sign Up'}
               </button>

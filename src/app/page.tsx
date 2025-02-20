@@ -51,13 +51,13 @@ const HomePage = () => {
 
     if (!subscription || !subscription.active) {
       setError('You need an active subscription to submit a request.');
-      toast.error('You need an active subscription to submit a request.');
+      toast.error('You need an active subscription.');
       return;
     }
 
     if (activeRequests >= subscription.requests) {
-      setError(`You’ve reached your limit of ${subscription.requests} active request${subscription.requests > 1 ? 's' : ''}.`);
-      toast.error(`You’ve reached your limit of ${subscription.requests} active request${subscription.requests > 1 ? 's' : ''}.`);
+      setError(`You’ve reached your limit of ${subscription.requests} active requests.`);
+      toast.error(`Limit reached: ${subscription.requests} active requests.`);
       return;
     }
 
@@ -71,70 +71,60 @@ const HomePage = () => {
       });
       setBrief('');
       setError('');
-      toast.success('Request submitted successfully!');
+      toast.success('Request submitted!');
       router.push(`/chat/${docRef.id}`);
     } catch (err) {
       console.error('Error submitting request:', err);
       setError('Failed to submit request.');
-      toast.error('Failed to submit request.');
+      toast.error('Submission failed.');
     }
   };
 
   if (authLoading || loading) {
-    return <div className="text-center mt-10 text-gray-400">Loading...</div>;
+    return <div className="text-center text-gray-400 mt-20">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-8 flex items-center justify-center">
       {user ? (
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-indigo-400 mb-6 animate-fade-in">
-            Welcome back, {user.email}!
+        <div className="max-w-2xl w-full">
+          <h1 className="text-3xl font-semibold text-white mb-6 text-center">
+            Welcome, {user.email}
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="card animate-slide-up">
-              <h2 className="text-xl font-semibold text-gray-200 mb-2">Start a New Request</h2>
-              {subscription && subscription.active ? (
-                <>
-                  <p className="text-gray-400 mb-4">
-                    Active Requests: {activeRequests}/{subscription.requests}
-                  </p>
-                  <form onSubmit={handleCreateRequest} className="space-y-4">
-                    <textarea
-                      value={brief}
-                      onChange={(e) => setBrief(e.target.value)}
-                      className="input h-24"
-                      placeholder="Describe your design needs..."
-                      required
-                    />
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
-                    <button type="submit" className="btn-primary w-full">Submit Request</button>
-                  </form>
-                </>
-              ) : (
+          <div className="card">
+            <h2 className="text-xl font-medium text-gray-200 mb-4">New Design Request</h2>
+            {subscription && subscription.active ? (
+              <>
                 <p className="text-gray-400 mb-4">
-                  Subscribe to start submitting design requests.
-                  <Link href="/subscribe" className="btn-primary mt-2 block text-center">Subscribe Now</Link>
+                  Active Requests: {activeRequests}/{subscription.requests}
                 </p>
-              )}
-              <Link href="/chat/request123" className="btn-secondary mt-4 block text-center">Go to Sample Chat</Link>
-            </div>
-            <div className="card animate-slide-up">
-              <h2 className="text-xl font-semibold text-gray-200 mb-2">Your Requests</h2>
-              <p className="text-gray-400 mb-4">Active: {activeRequests}</p>
-              <Link href="/admin" className="btn-secondary">View All (Admin Only)</Link>
-            </div>
+                <form onSubmit={handleCreateRequest} className="space-y-4">
+                  <textarea
+                    value={brief}
+                    onChange={(e) => setBrief(e.target.value)}
+                    className="input h-32"
+                    placeholder="Describe your design needs..."
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm">{error}</p>}
+                  <button type="submit" className="btn-primary w-full">Submit</button>
+                </form>
+              </>
+            ) : (
+              <p className="text-gray-400 mb-4">
+                Subscribe to submit requests.{' '}
+                <Link href="/subscribe" className="text-indigo-400 hover:underline">Get a Plan</Link>
+              </p>
+            )}
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-indigo-400 mb-6 animate-fade-in">
-            BrandBlitz
-          </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mb-8 animate-slide-up">
-            Fast, collaborative design solutions for startups and businesses. Chat with our team to bring your ideas to life.
+        <div className="text-center max-w-md">
+          <h1 className="text-4xl font-semibold text-white mb-6">BrandBlitz</h1>
+          <p className="text-gray-400 mb-8">
+            Fast, collaborative design solutions for startups and businesses.
           </p>
-          <div className="space-x-4 animate-slide-up">
+          <div className="space-x-4">
             <Link href="/auth" className="btn-primary">Get Started</Link>
             <Link href="/chat/request123" className="btn-secondary">Learn More</Link>
           </div>
