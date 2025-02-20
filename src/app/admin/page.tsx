@@ -6,18 +6,20 @@ import { db } from '@/firebase';
 import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 import { DesignRequest } from '@/types/index';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const AdminPage = () => {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [requests, setRequests] = useState<DesignRequest[]>([]);
   const [users, setUsers] = useState<Record<string, { displayName: string; subscription?: { plan: string; requests: number; active: boolean } }>>({});
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    if (!user) return;
-
-    const adminUid = 'admin1';
-    if (user.uid !== adminUid) return;
+    if (!user || role !== 'admin') {
+      if (!loading) router.push('/auth');
+      return;
+    }
 
     const requestsRef = collection(db, 'requests');
     const unsubscribeRequests = onSnapshot(requestsRef, (snapshot) => {
@@ -45,7 +47,7 @@ const AdminPage = () => {
       unsubscribeRequests();
       unsubscribeUsers();
     };
-  }, [user]);
+  }, [user, role, router, loading]); // Added 'loading' to dependencies
 
   const updateStatus = async (requestId: string, newStatus: DesignRequest['status']) => {
     const requestRef = doc(db, 'requests', requestId);
@@ -63,7 +65,7 @@ const AdminPage = () => {
     );
   }
 
-  if (user.uid !== 'admin1') {
+  if (role !== 'admin') {
     return (
       <div className="flex items-center justify-center min-h-screen p-6">
         <div className="card text-center">
