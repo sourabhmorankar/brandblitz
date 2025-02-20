@@ -2,6 +2,8 @@ import './globals.css';
 import { ReactNode } from 'react';
 import AuthWrapper from '@/components/AuthWrapper';
 import Nav from '@/components/Nav';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata = {
   title: 'BrandBlitz',
@@ -24,6 +26,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
           <footer className="bg-gray-800 border-t border-gray-700 p-4 text-center text-gray-400 text-sm">
             © {new Date().getFullYear()} BrandBlitz. All rights reserved.
           </footer>
+          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         </AuthWrapper>
       </body>
     </html>

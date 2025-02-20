@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthWrapper';
 import { FirebaseError } from 'firebase/app';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const AuthPage = () => {
   const { user, role, signup, login, googleLogin, logout } = useAuth();
@@ -32,9 +33,11 @@ const AuthPage = () => {
       setPassword('');
       setDisplayName('');
       setError('');
+      toast.success('Signed up successfully!');
     } catch (err: unknown) {
       const firebaseErr = err as FirebaseError;
       setError(firebaseErr.message || 'Sign-up failed');
+      toast.error(firebaseErr.message || 'Sign-up failed');
     }
   };
 
@@ -45,9 +48,11 @@ const AuthPage = () => {
       setEmail('');
       setPassword('');
       setError('');
+      toast.success('Logged in successfully!');
     } catch (err: unknown) {
       const firebaseErr = err as FirebaseError;
       setError(firebaseErr.message || 'Login failed');
+      toast.error(firebaseErr.message || 'Login failed');
     }
   };
 
@@ -55,9 +60,11 @@ const AuthPage = () => {
     try {
       await googleLogin();
       setError('');
+      toast.success('Logged in with Google successfully!');
     } catch (err: unknown) {
       const firebaseErr = err as FirebaseError;
       setError(firebaseErr.message || 'Google login failed');
+      toast.error(firebaseErr.message || 'Google login failed');
     }
   };
 
@@ -65,9 +72,11 @@ const AuthPage = () => {
     try {
       await logout();
       setError('');
+      toast.success('Logged out successfully!');
     } catch (err: unknown) {
       const firebaseErr = err as FirebaseError;
       setError(firebaseErr.message || 'Logout failed');
+      toast.error(firebaseErr.message || 'Logout failed');
     }
   };
 

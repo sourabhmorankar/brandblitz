@@ -6,6 +6,7 @@ import { db } from '@/firebase';
 import { collection, addDoc, query, where, onSnapshot, doc } from 'firebase/firestore';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const HomePage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -50,11 +51,13 @@ const HomePage = () => {
 
     if (!subscription || !subscription.active) {
       setError('You need an active subscription to submit a request.');
+      toast.error('You need an active subscription to submit a request.');
       return;
     }
 
     if (activeRequests >= subscription.requests) {
       setError(`You’ve reached your limit of ${subscription.requests} active request${subscription.requests > 1 ? 's' : ''}.`);
+      toast.error(`You’ve reached your limit of ${subscription.requests} active request${subscription.requests > 1 ? 's' : ''}.`);
       return;
     }
 
@@ -68,10 +71,12 @@ const HomePage = () => {
       });
       setBrief('');
       setError('');
+      toast.success('Request submitted successfully!');
       router.push(`/chat/${docRef.id}`);
     } catch (err) {
       console.error('Error submitting request:', err);
       setError('Failed to submit request.');
+      toast.error('Failed to submit request.');
     }
   };
 
