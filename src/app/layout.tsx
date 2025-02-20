@@ -17,16 +17,16 @@ interface RootLayoutProps {
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en">
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen bg-gray-900">
         <AuthWrapper>
-          <header className="bg-gray-900 border-b border-gray-800 p-4 sticky top-0 z-10">
+          <header className="bg-gray-800 border-b border-gray-700 p-4">
             <Nav />
           </header>
-          <main className="flex-1 bg-gray-950">{children}</main>
-          <footer className="bg-gray-900 border-t border-gray-800 p-6 text-gray-500 text-sm text-center">
+          <main className="flex-1">{children}</main>
+          <footer className="bg-gray-800 border-t border-gray-700 p-4 text-center text-gray-400 text-sm">
             © {new Date().getFullYear()} BrandBlitz. All rights reserved.
           </footer>
-          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} theme="dark" />
+          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         </AuthWrapper>
       </body>
     </html>
