@@ -1,14 +1,32 @@
 'use client';
 
+import { useState } from 'react';
 import { useAuth } from '@/components/AuthWrapper';
+import { db } from '@/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 const HomePage = () => {
   const { user, loading } = useAuth();
+  const [brief, setBrief] = useState('');
 
   if (loading) {
     return <div className="text-center mt-10 text-gray-400">Loading...</div>;
   }
+
+  const handleCreateRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !brief.trim()) return;
+
+    await addDoc(collection(db, 'requests'), {
+      clientId: user.uid,
+      brief,
+      status: 'pending',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+    setBrief('');
+  };
 
   return (
     <div className="min-h-screen p-6">
@@ -20,13 +38,22 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="card animate-slide-up">
               <h2 className="text-xl font-semibold text-gray-200 mb-2">Start a New Request</h2>
-              <p className="text-gray-400 mb-4">Need a design? Jump into the chat to get started.</p>
-              <Link href="/chat" className="btn-primary">Go to Chat</Link>
+              <form onSubmit={handleCreateRequest} className="space-y-4">
+                <textarea
+                  value={brief}
+                  onChange={(e) => setBrief(e.target.value)}
+                  className="input h-24"
+                  placeholder="Describe your design needs..."
+                  required
+                />
+                <button type="submit" className="btn-primary w-full">Submit Request</button>
+              </form>
+              <Link href="/chat/request123" className="btn-secondary mt-4 block text-center">Go to Chat</Link>
             </div>
             <div className="card animate-slide-up">
               <h2 className="text-xl font-semibold text-gray-200 mb-2">Your Requests</h2>
               <p className="text-gray-400 mb-4">View your active design requests (coming soon).</p>
-              <Link href="/chat" className="btn-secondary">Check Status</Link>
+              <Link href="/chat/request123" className="btn-secondary">Check Status</Link>
             </div>
           </div>
         </div>
@@ -40,7 +67,7 @@ const HomePage = () => {
           </p>
           <div className="space-x-4 animate-slide-up">
             <Link href="/auth" className="btn-primary">Get Started</Link>
-            <Link href="/chat" className="btn-secondary">Learn More</Link>
+            <Link href="/chat/request123" className="btn-secondary">Learn More</Link>
           </div>
         </div>
       )}

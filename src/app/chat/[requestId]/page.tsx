@@ -7,17 +7,20 @@ import { ref, onValue, push } from 'firebase/database';
 import { doc, onSnapshot } from 'firebase/firestore';
 import Message from '@/components/Message';
 import InputBox from '@/components/InputBox';
-import { ChatMessage } from '@/types/chat';
+import { ChatMessage, DesignRequest } from '@/types/index';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 const ChatPage = () => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [users, setUsers] = useState<Record<string, { displayName: string }>>({});
-  const requestId = 'request123'; // Simulate; will be dynamic later
+  const [request, setRequest] = useState<DesignRequest | null>(null);
+  const params = useParams();
+  const requestId = typeof params?.requestId === 'string' ? params.requestId : 'default';
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !requestId) return;
 
     const messagesRef = ref(rtdb, `chats/${requestId}`);
     const unsubscribeMessages = onValue(messagesRef, (snapshot) => {
@@ -35,6 +38,14 @@ const ChatPage = () => {
       }
     });
 
+    const requestRef = doc(db, 'requests', requestId);
+    const unsubscribeRequest = onSnapshot(requestRef, (snapshot) => {
+      const data = snapshot.data();
+      if (data) {
+        setRequest({ id: snapshot.id, ...data } as DesignRequest);
+      }
+    });
+
     const usersRef = doc(db, 'users', 'allUsers');
     const unsubscribeUsers = onSnapshot(usersRef, (snapshot) => {
       const data = snapshot.data();
@@ -45,12 +56,13 @@ const ChatPage = () => {
 
     return () => {
       unsubscribeMessages();
+      unsubscribeRequest();
       unsubscribeUsers();
     };
   }, [user, requestId]);
 
   const sendMessage = (text: string) => {
-    if (!user || !text.trim()) return;
+    if (!user || !text.trim() || !requestId) return;
 
     const messagesRef = ref(rtdb, `chats/${requestId}`);
     push(messagesRef, {
@@ -92,11 +104,16 @@ const ChatPage = () => {
       </div>
       <aside className="w-80 bg-gray-800 p-6 border-l border-gray-700 hidden md:block">
         <h2 className="text-lg font-semibold text-indigo-400 mb-4">Request Details</h2>
-        <div className="space-y-2 text-gray-300">
-          <p><strong>ID:</strong> {requestId}</p>
-          <p><strong>Status:</strong> In Progress</p>
-          <p><strong>Client:</strong> {users[user.uid]?.displayName || user.email}</p>
-        </div>
+        {request ? (
+          <div className="space-y-2 text-gray-300">
+            <p><strong>ID:</strong> {request.id}</p>
+            <p><strong>Status:</strong> {request.status}</p>
+            <p><strong>Client:</strong> {users[user.uid]?.displayName || user.email}</p>
+            <p><strong>Brief:</strong> {request.brief}</p>
+          </div>
+        ) : (
+          <p className="text-gray-400">Loading request details...</p>
+        )}
       </aside>
     </div>
   );
