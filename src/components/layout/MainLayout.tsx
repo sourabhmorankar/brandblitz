@@ -4,53 +4,73 @@ import React, { useState, useEffect, useRef } from 'react';
 import Loader from './Loader';
 import MainMenu from '@/components/navigation/MainMenu';
 import SubMenu from '@/components/navigation/SubMenu';
+import Button from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-const pages = {
+const defaultPages = {
   home: {
     title: 'Home',
     submenu: [
-      { text: 'item1', sectionId: 'itemh1' },
-      { text: 'item2', sectionId: 'itemh2' },
-      { text: 'item3', sectionId: 'itemh3' },
-      { text: 'item4', sectionId: 'itemh4' }
+      { text: 'Overview', sectionId: 'overview' },
+      { text: 'Features', sectionId: 'features' },
+      { text: 'How It Works', sectionId: 'how-it-works' },
+      { text: 'Pricing', sectionId: 'pricing' }
     ]
   },
   portfolio: {
     title: 'Portfolio',
     submenu: [
-      { text: 'item1', sectionId: 'itemp1' },
-      { text: 'item2', sectionId: 'itemp2' },
-      { text: 'item3', sectionId: 'itemp3' },
-      { text: 'item4', sectionId: 'itemp4' }
+      { text: 'Logos', sectionId: 'logos' },
+      { text: 'Web Design', sectionId: 'web-design' },
+      { text: 'Brand Identity', sectionId: 'brand-identity' },
+      { text: 'Print', sectionId: 'print' }
     ]
   },
   blog: {
     title: 'Blog',
     submenu: [
-      { text: 'item1', sectionId: 'itemb1' },
-      { text: 'item2', sectionId: 'itemb2' },
-      { text: 'item3', sectionId: 'itemb3' }
+      { text: 'Design Tips', sectionId: 'design-tips' },
+      { text: 'Branding', sectionId: 'branding' },
+      { text: 'Marketing', sectionId: 'marketing' }
+    ]
+  }
+};
+
+// Add additional pages for authenticated users
+const authenticatedPages = {
+  ...defaultPages,
+  dashboard: {
+    title: 'Dashboard',
+    submenu: [
+      { text: 'Projects', sectionId: 'projects' },
+      { text: 'Messages', sectionId: 'messages' },
+      { text: 'Settings', sectionId: 'settings' }
     ]
   },
-  login: {
-    title: 'Login',
+  designRequests: {
+    title: 'Design Requests',
     submenu: [
-      { text: 'item1', sectionId: 'iteml1' },
-      { text: 'item2', sectionId: 'iteml2' }
+      { text: 'New Request', sectionId: 'new-request' },
+      { text: 'Active Requests', sectionId: 'active-requests' },
+      { text: 'Completed', sectionId: 'completed' }
     ]
   }
 };
 
 const MainLayout = ({ children }: MainLayoutProps) => {
+  const { user, logout } = useAuth();
   const [currentPage, setCurrentPage] = useState('home');
   const [submenuActive, setSubmenuActive] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [elementsVisible, setElementsVisible] = useState(false);
   const speedLinesRef = useRef<NodeListOf<Element> | null>(null);
+  
+  // Determine which pages to show based on authentication status
+  const pages = user ? authenticatedPages : defaultPages;
 
   useEffect(() => {
     if (loaded) {
@@ -105,36 +125,46 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     <div className="relative h-screen">
       <Loader onLoadComplete={handleLoadComplete} />
       
-      {/* Menu button hidden for now
       <div 
         id="menubtn" 
         className="lexend-body lexend-bold" 
-        style={{ opacity: elementsVisible ? 1 : 0, transition: 'opacity 0.5s', display: 'none' }}
+        style={{ 
+          opacity: elementsVisible ? 1 : 0, 
+          transition: 'opacity 0.5s',
+          display: 'block'
+        }}
       >
         <Button 
           variant="special" 
           onClick={toggleSubmenu} 
           aria-label="Open Navigation Menu"
         >
-          MENU
+          OPEN
         </Button>
       </div>
-      */}
       
       <MainMenu 
-        pages={pages} 
-        currentPage={currentPage} 
-        onPageChange={handlePageChange}
+        isAuthenticated={!!user}
+        onLogout={async () => {
+          try {
+            await logout();
+            // No need to redirect as the useEffect in protected pages will handle that
+            setCurrentPage('home'); // Reset to home page after logout
+          } catch (error) {
+            console.error('Error logging out:', error);
+          }
+        }}
         style={{ opacity: elementsVisible ? 1 : 0, transition: 'opacity 0.5s' }}
       />
       
       <SubMenu 
         isActive={submenuActive} 
         items={pages[currentPage as keyof typeof pages].submenu} 
-        onItemClick={handleSubMenuItemClick} 
+        onItemClick={handleSubMenuItemClick}
+        userPages={pages}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
       />
-      
-      {/* Social icons removed as requested */}
       
       <div className={`landingcover ${submenuActive ? 'active' : ''}`} onClick={toggleSubmenu}></div>
       

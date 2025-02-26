@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Lexend } from 'next/font/google';
 import MainLayout from '@/components/layout/MainLayout';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 const lexend = Lexend({ 
   subsets: ['latin'],
@@ -27,9 +28,11 @@ export default function RootLayout({
         />
       </head>
       <body className={`${lexend.variable} lexend-body`}>
-        <MainLayout>
-          {children}
-        </MainLayout>
+        <AuthProvider>
+          <MainLayout>
+            {children}
+          </MainLayout>
+        </AuthProvider>
       </body>
     </html>
   );

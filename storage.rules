@@ -1,0 +1,40 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Default deny rule
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+    
+    // User profile images
+    match /users/{userId}/profile/{filename} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Project-related files
+    match /projects/{projectId}/{allPaths=**} {
+      allow read: if request.auth != null && 
+                   (firestore.exists(/databases/(default)/documents/projects/$(projectId))) &&
+                   ((firestore.get(/databases/(default)/documents/projects/$(projectId))).data.clientId == request.auth.uid ||
+                    (firestore.get(/databases/(default)/documents/projects/$(projectId))).data.designerId == request.auth.uid);
+      
+      allow write: if request.auth != null && 
+                    (firestore.exists(/databases/(default)/documents/projects/$(projectId))) &&
+                    ((firestore.get(/databases/(default)/documents/projects/$(projectId))).data.clientId == request.auth.uid ||
+                     (firestore.get(/databases/(default)/documents/projects/$(projectId))).data.designerId == request.auth.uid);
+    }
+    
+    // Public blog images
+    match /blogs/{blogId}/{filename} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+    
+    // Public portfolio images
+    match /portfolios/{portfolioId}/{filename} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+  }
+}
